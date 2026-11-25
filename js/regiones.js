@@ -135,16 +135,6 @@ function toggleSidebar(abrir) {
 }
 
 /*__________________Piezas de HTML reutilizables____________________________*/
-function htmlEstadoApi() {
-  if (estadoApi === "cargando") {
-    return `<p class="api-estado"><i class="fa-solid fa-spinner fa-spin"></i> Consultando la API de provincias de Argentina...</p>`;
-  }
-  if (estadoApi === "error") {
-    return `<p class="api-estado api-estado-error"><i class="fa-solid fa-triangle-exclamation"></i> No se pudo conectar con la API Georef AR. Se muestran los datos guardados en el proyecto. <button type="button" class="btn-reintentar" id="btn-reintentar">Reintentar</button></p>`;
-  }
-  return `<p class="api-estado api-estado-ok"><i class="fa-solid fa-circle-check"></i> Provincias cargadas desde la API Georef AR (${totalProvinciasApi} jurisdicciones)</p>`;
-}
-
 function htmlNavegacion(indice) {
   const anterior = paginas[indice - 1];
   const siguiente = paginas[indice + 1];
@@ -167,11 +157,8 @@ function htmlIntroduccion(indice) {
   return `
     <p class="tuto-breadcrumb">Regiones › Introducción</p>
     <h1>Regiones de Argentina</h1>
-    ${htmlEstadoApi()}
     ${htmlNavegacion(indice)}
     <p class="tuto-lead">Argentina suele dividirse en cinco grandes regiones productivas. Cada una tiene su clima, su relieve y sus cultivos característicos. Elegí una en el menú de la izquierda o en la tabla.</p>
-
-    <div class="tuto-nota"><i class="fa-solid fa-lightbulb"></i><p>Los nombres de las provincias salen de la API Georef AR del Gobierno nacional. La región a la que pertenece cada una y la información de cultivos son datos propios de este proyecto.</p></div>
 
     <h2>Las cinco regiones</h2>
     <div class="tabla-scroll">
@@ -192,7 +179,6 @@ function htmlTablaProvincias(region) {
     return `
       <tr>
         <td><strong>${escaparHtml(api ? api.nombre : nombre)}</strong><span class="tuto-sub">${escaparHtml(info.descripcion)}</span></td>
-        <td>${api ? escaparHtml(api.id) : "—"}</td>
         <td>${escaparHtml(info.cultivo)}</td>
         <td><span class="badge-rubro">${escaparHtml(info.categoria)}</span></td>
         <td>${escaparHtml(info.campaña)}</td>
@@ -202,7 +188,7 @@ function htmlTablaProvincias(region) {
   return `
     <div class="tabla-scroll">
       <table class="tuto-tabla">
-        <thead><tr><th>Provincia</th><th>ID Georef</th><th>Cultivos</th><th>Categoría</th><th>Campaña</th></tr></thead>
+        <thead><tr><th>Provincia</th><th>Cultivos</th><th>Categoría</th><th>Campaña</th></tr></thead>
         <tbody>${filas}</tbody>
       </table>
     </div>`;
@@ -213,7 +199,6 @@ function htmlRegion(region, indice) {
   return `
     <p class="tuto-breadcrumb">Regiones › ${region.corto}</p>
     <h1><i class="fa-solid ${region.icono}"></i> ${region.nombre}</h1>
-    ${htmlEstadoApi()}
     ${htmlNavegacion(indice)}
     <p class="tuto-lead">${region.resumen}</p>
 
@@ -278,9 +263,6 @@ window.addEventListener("hashchange", () => {
   renderizarPagina();
   toggleSidebar(false);
   window.scrollTo({ top: 0 });
-});
-if (contenido) contenido.addEventListener("click", (e) => {
-  if (e.target.closest("#btn-reintentar")) cargarProvincias();
 });
 if (btnAbrirSidebar) btnAbrirSidebar.addEventListener("click", () => toggleSidebar(true));
 if (btnCerrarSidebar) btnCerrarSidebar.addEventListener("click", () => toggleSidebar(false));
